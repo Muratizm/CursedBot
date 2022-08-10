@@ -1,4 +1,4 @@
-package com.muratcangozum.CursedBot.listiners;
+package com.muratcangozum.CursedBot.Listeners;
 
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.interactions.DiscordLocale;

@@ -1,6 +1,6 @@
 package com.muratcangozum.CursedBot.commands;
 
-import com.muratcangozum.CursedBot.listiners.Information;
+import com.muratcangozum.CursedBot.Listeners.Information;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -13,9 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
