@@ -7,23 +7,26 @@ import java.util.List;
 
 public class Information {
 
+    private String serverName;
     private DiscordLocale locale;
     private int members;
     private List<GuildChannel> channelList;
 
 
-    public Information(DiscordLocale locale, int members, List<GuildChannel> channelList){
+    public Information(String serverName, DiscordLocale locale, int members, List<GuildChannel> channelList) {
 
-   this.locale = locale;
-   this.members = members;
-   this.channelList = channelList;
+        this.serverName = serverName;
+        this.locale = locale;
+        this.members = members;
+        this.channelList = channelList;
 
-   System.out.println("konumu: " + locale + " Üye sayısı: ");
+        System.out.println("Sunucu ismi: " + serverName);
+        System.out.println("konumu: " + "\n" + locale + " Üye sayısı: ");
 
-   for (Object o : channelList){
+        for (Object o : channelList) {
 
-       System.out.println("Kanalları: " + o);
-   }
+            System.out.println("Kanalları: " + o);
+        }
 
 
     }

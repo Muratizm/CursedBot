@@ -25,10 +25,13 @@ public class CommandManager extends ListenerAdapter {
 
         String command = event.getName();
 
+
+        String serverName = event.getGuild().getName();
         DiscordLocale locale = event.getGuild().getLocale();
         int members = event.getGuild().getMemberCount();
         List<GuildChannel> channelList = event.getGuild().getChannels();
-        Information getInformation = new Information(locale, members, channelList);
+        Information getInformation = new Information(serverName, locale, members, channelList);
+
 
         if (command.contains("sunucu")) {
 
@@ -38,12 +41,14 @@ public class CommandManager extends ListenerAdapter {
         } else if (command.contains("öldür")) {
 
             OptionMapping mappingKill = event.getOption("öldür");
-            Mentions mentions = mappingKill.getMentions();
+            User user = mappingKill.getAsUser();
+
 
             MessageChannel channel = event.getChannel();
-            channel.sendMessage(mentions + " öldü").queue();
+            channel.sendMessage(user.getAsMention() + " öldü.").queue();
 
-            event.reply("unseen assasin just for u").setEphemeral(true).queue();
+
+            event.reply(user.getAsTag() + " peşine suikastçı gönderdin!").setEphemeral(true).queue();
 
         } else if (command.contains("roller")) {
 
@@ -59,13 +64,25 @@ public class CommandManager extends ListenerAdapter {
 
         } else if (command.contains("konuş")) {
 
-            OptionMapping mappingSay = event.getOption("konuş");
+            OptionMapping mappingSay = event.getOption("mesaj");
+            OptionMapping mappingChannel = event.getOption("kanal");
             String message = mappingSay.getAsString();
 
-            MessageChannel channel = event.getChannel();
+            if (mappingChannel != null) {
 
-            channel.sendMessage(message).queue();
-            event.reply("Mesajın gönderildi!").setEphemeral(true).queue();
+                MessageChannel channel = mappingChannel.getAsChannel().asGuildMessageChannel();
+                channel.sendMessage(message).queue();
+                event.reply("Mesajın gönderildi!").setEphemeral(true).queue();
+
+
+            } else {
+                MessageChannel chan = event.getChannel();
+                chan.sendMessage(message).queue();
+                event.reply("Mesajın gönderildi!").setEphemeral(true).queue();
+
+
+            }
+
 
         }
 
@@ -73,33 +90,31 @@ public class CommandManager extends ListenerAdapter {
     }
 
     //Guild Command - sonradan eklenen komutlar var olan sunucularda çalışmaz max komut limiti 100
+    // Command data da bir problem var onu çözmen gerek
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
 
-        OptionData killOpt = new OptionData(OptionType.MENTIONABLE, "Öldürmek istediğin kişiyi etiketle", "Birini öldürmek için kullanılır", true);
-        OptionData saySomething = new OptionData(OptionType.STRING, "konuş", "Sizin yerinize bot konuşsun.");
+        OptionData killOpt = new OptionData(OptionType.USER, "öldür", "Birini öldürmek için kullanılır", true);
+        OptionData saySomething = new OptionData(OptionType.STRING, "mesaj", "Sizin yerinize bot konuşsun.").setRequired(true);
+        OptionData WhichChannel = new OptionData(OptionType.CHANNEL, "kanal", "Mesaji göndermek istediğiniz kanal").setRequired(false);
 
         List<CommandData> commandData = new ArrayList<>();
+
+        for (CommandData data : commandData) {
+
+            System.out.println("Komutlar: " + data + "\n");
+
+        }
+
+
         commandData.add(Commands.slash("roller", "Sunucuda ki rolleri gösterir."));
         commandData.add(Commands.slash("öldür", "Ölüm meleği komutu, öldürmek istediğinin ismini yazman yeterli").addOptions(killOpt));
-        commandData.add(Commands.slash("konuş", "Sizin yerinize bot konuşsun.").addOptions(saySomething));
+        commandData.add(Commands.slash("konuş", "Sizin yerinize bot konuşsun.").addOptions(saySomething, WhichChannel));
         event.getGuild().updateCommands().addCommands(commandData).queue();
 
-    }
-
-    // unlimited it takes maybe an hour
-    // şu anlık altı kullanma ortalık karışıyor
-
-    @Override
-    public void onReady(@NotNull ReadyEvent event) {
-        List<CommandData> commandData = new ArrayList<>();
-        commandData.add(Commands.slash("sunucu", "Sunucunun konumunu gösterir"));
-        commandData.add(Commands.slash("öldür", "Ölüm meleği komutu, öldürmek istediğinin ismini yazman yeterli"));
-        event.getJDA().upsertCommand("sunucu", "Sunucunun konumunu gösterir");
-        event.getJDA().upsertCommand("öldür", "Ölüm meleği komutu, öldürmek istediğinin ismini yazman yeterli");
-        event.getJDA().upsertCommand((CommandData) commandData).queue();
-        event.getJDA().updateCommands().addCommands(commandData).queue();
 
     }
+
+
 }

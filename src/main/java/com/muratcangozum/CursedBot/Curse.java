@@ -31,6 +31,8 @@ public class Curse {
 
         //ShardManager Building
 
+
+
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
         builder.setStatus(OnlineStatus.IDLE);
         builder.setActivity(Activity.watching(doing));

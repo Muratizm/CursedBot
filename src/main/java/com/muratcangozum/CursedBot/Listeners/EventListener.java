@@ -23,9 +23,9 @@ public class EventListener extends ListenerAdapter {
         User user = event.getUser();
         String emoji = event.getReaction().getEmoji().getAsReactionCode();
         String channelMention = event.getChannel().getAsMention();
-        String jumpLink = event.getJumpUrl();
+        String jumpLink = event.getJumpUrl().toString();
 
-        String message = user.getAsTag() + "  Mesaja şu tepkiyi gösterdi: " + emoji + "  Kanalında:  " + channelMention;
+        String message = user.getAsTag() + "  Mesaja şu tepkiyi gösterdi: " + emoji + "  Kanalında:  " + channelMention + jumpLink;
 
 
 
