@@ -26,6 +26,7 @@ public class CommandManager extends ListenerAdapter {
         String command = event.getName();
 
 
+
         String serverName = event.getGuild().getName();
         DiscordLocale locale = event.getGuild().getLocale();
         int members = event.getGuild().getMemberCount();
@@ -33,14 +34,21 @@ public class CommandManager extends ListenerAdapter {
         Information getInformation = new Information(serverName, locale, members, channelList);
 
 
-        if (command.contains("sunucu")) {
+        if (command.equalsIgnoreCase("sunucu")) {
 
             MessageChannel channel = event.getChannel();
-            channel.sendMessage("Sunucu konumu: " + locale + " Bulunuyor.").queue();
+            channel.sendMessage("Sunucu ismi: " + event.getGuild().getName()).queue();
+            channel.sendMessage("Sunucu konumu: " + locale).queue();
+            channel.sendMessage("Sunucu toplam kişi sayısı: " + event.getGuild().getMemberCount()).queue();
+            channel.sendMessage("Sunucu boost sayısı: " + event.getGuild().getBoostCount()).queue();
+            channel.sendMessage("Sunucu kurulma tarihi: " + event.getGuild().getTimeCreated()).queue();
+            channel.sendMessage("Sunucu sahibi: " + event.getGuild().getOwner().getAsMention()).queue();
 
-        } else if (command.contains("öldür")) {
+            event.reply("Sunucu bilgileri başarıyla derlendi").setEphemeral(true).queue();
 
-            OptionMapping mappingKill = event.getOption("öldür");
+        } else if (command.equalsIgnoreCase("öldür")) {
+
+            OptionMapping mappingKill = event.getOption("ismi");
             User user = mappingKill.getAsUser();
 
 
@@ -50,7 +58,7 @@ public class CommandManager extends ListenerAdapter {
 
             event.reply(user.getAsTag() + " peşine suikastçı gönderdin!").setEphemeral(true).queue();
 
-        } else if (command.contains("roller")) {
+        } else if (command.equalsIgnoreCase("roller")) {
 
             event.deferReply().setEphemeral(true).queue();
             String response = "";
@@ -62,7 +70,7 @@ public class CommandManager extends ListenerAdapter {
 
             event.getHook().sendMessage(response).setEphemeral(true).queue();
 
-        } else if (command.contains("konuş")) {
+        } else if (command.equalsIgnoreCase("konuş")) {
 
             OptionMapping mappingSay = event.getOption("mesaj");
             OptionMapping mappingChannel = event.getOption("kanal");
@@ -84,8 +92,72 @@ public class CommandManager extends ListenerAdapter {
             }
 
 
-        }
+        } else if (command.equalsIgnoreCase("duygular")) {
 
+
+            OptionMapping optionMapping = event.getOption("duygu");
+            OptionMapping optionKisi = event.getOption("kişi");
+
+            User user = optionKisi.getAsUser();
+            String duygu = optionMapping.getAsString().toString();
+
+
+            String replyMessage = "";
+
+            switch (duygu.toLowerCase()) {
+
+                case "sev" -> {
+
+                    replyMessage = " Kafasını sevdi.";
+
+                }
+                case "sarıl" -> {
+
+                    replyMessage = " Sarıldı.";
+
+                }
+                case "tekmele" -> {
+
+                    replyMessage = " Tekmeledı!";
+
+                }
+
+
+            }
+            event.getChannel().sendMessage(event.getUser().getName() + ", " + user.getAsMention() + replyMessage).queue();
+
+        } else if (command.equalsIgnoreCase("at")) {
+
+            Member member = event.getOption("kim").getAsMember();
+
+            String kickedPerson = member.getAsMention().trim();
+
+            event.getGuild().kick(member.getUser()).queue();
+
+            event.reply(kickedPerson + " Sunucudan Atıldı.").setEphemeral(true).queue();
+
+
+        } else if (command.equalsIgnoreCase("rolver")) {
+
+
+            Member member = event.getOption("kime").getAsMember();
+            Role role = event.getOption("rol").getAsRole();
+
+            event.getGuild().addRoleToMember(member.getUser(), role).queue();
+            event.reply(member.getAsMention() + " Kişiye şu role verildi: " + role.getAsMention()).setEphemeral(true).queue();
+
+        }
+        else if(command.equalsIgnoreCase("rolal")){
+
+             Member member = event.getOption("kimden").getAsMember();
+             Role role = event.getOption("rol").getAsRole();
+
+             String SomeoneTakenRole = member.getAsMention().trim();
+             event.getGuild().removeRoleFromMember(member.getUser(),role).queue();
+             event.reply(SomeoneTakenRole + " Kişisinden şu rol: " + role.getAsMention() + " Alındı.").setEphemeral(true).queue();
+
+
+        }
 
     }
 
@@ -95,19 +167,33 @@ public class CommandManager extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
 
-        OptionData killOpt = new OptionData(OptionType.USER, "öldür", "Birini öldürmek için kullanılır", true);
+        OptionData killOpt = new OptionData(OptionType.USER, "ismi", "Birini öldürmek için kullanılır", true);
         OptionData saySomething = new OptionData(OptionType.STRING, "mesaj", "Sizin yerinize bot konuşsun.").setRequired(true);
-        OptionData WhichChannel = new OptionData(OptionType.CHANNEL, "kanal", "Mesaji göndermek istediğiniz kanal").setRequired(false);
+        OptionData WhichChannel = new OptionData(OptionType.CHANNEL, "kanal", "Mesaji göndermek istediğiniz kanal").setRequired(false)
+                .setChannelTypes(ChannelType.TEXT, ChannelType.NEWS, ChannelType.GUILD_PUBLIC_THREAD);
+
+        OptionData duyguKisi = new OptionData(OptionType.USER, "kişi", "Kime duygu göndermek istiyorsum?", true);
+        OptionData duyguMetin = new OptionData(OptionType.STRING, "duygu", "Duygu seçenekleri", true)
+                .addChoice("Sev", "sev")
+                .addChoice("Sarıl", "sarıl")
+                .addChoice("Tekme", "tekmele");
+
+        OptionData kickSomeOne = new OptionData(OptionType.USER, "kim", "Atılacak kişinin ismini girin.", true);
+        OptionData rolSomeone = new OptionData(OptionType.USER, "kime", "Rol vermek istediğiniz kişi", true);
+        OptionData WhichRole = new OptionData(OptionType.ROLE, "rol", "Hangi rol?", true);
 
         List<CommandData> commandData = new ArrayList<>();
 
+        OptionData fromWho = new OptionData(OptionType.USER,"kimden","Rolünü alacağınız kişi",true);
         for (CommandData data : commandData) {
 
             System.out.println("Komutlar: " + data + "\n");
 
         }
-
-
+        commandData.add(Commands.slash("rolal","kişinin rolünü almak için kullanılır").addOptions(fromWho,WhichRole));
+        commandData.add(Commands.slash("rolver", "Birine rol vermek için kullanılır").addOptions(rolSomeone,WhichRole));
+        commandData.add(Commands.slash("at", "Birini sunucudan atmak için kullanılır. bkz;kick").addOptions(kickSomeOne));
+        commandData.add(Commands.slash("duygular", "Bot, istenilen duyguyu işler.").addOptions(duyguMetin, duyguKisi));
         commandData.add(Commands.slash("roller", "Sunucuda ki rolleri gösterir."));
         commandData.add(Commands.slash("öldür", "Ölüm meleği komutu, öldürmek istediğinin ismini yazman yeterli").addOptions(killOpt));
         commandData.add(Commands.slash("konuş", "Sizin yerinize bot konuşsun.").addOptions(saySomething, WhichChannel));

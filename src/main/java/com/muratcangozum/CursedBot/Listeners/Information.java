@@ -21,7 +21,7 @@ public class Information {
         this.channelList = channelList;
 
         System.out.println("Sunucu ismi: " + serverName);
-        System.out.println("konumu: " + "\n" + locale + " Üye sayısı: ");
+        System.out.println("konumu: "  + locale + "\n" + " Üye sayısı: " + members);
 
         for (Object o : channelList) {
 
