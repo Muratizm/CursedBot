@@ -76,6 +76,10 @@ public class EventListener extends ListenerAdapter {
 
                 channel.sendMessage("Benim yaratıcım Myura#7498").queue();
             }
+            else if(content.contains("sa")){
+
+                channel.sendMessage("as").queue();
+            }
 
         }
     }

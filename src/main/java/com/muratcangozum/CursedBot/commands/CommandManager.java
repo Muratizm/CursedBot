@@ -3,6 +3,7 @@ package com.muratcangozum.CursedBot.commands;
 import com.muratcangozum.CursedBot.Listeners.Information;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -20,6 +22,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,17 +46,20 @@ public class CommandManager extends ListenerAdapter {
 
         if (command.equalsIgnoreCase("sunucu")) {
 
+
             EmbedBuilder embed = new EmbedBuilder();
 
             embed.setTitle("Sunucu bilgileri:");
             embed.setColor(Color.green);
-            embed.setThumbnail(event.getUser().getAvatarUrl()).setAuthor(event.getUser().getAsTag());
+            embed.setThumbnail(event.getGuild().getIconUrl());
             embed.addField("Sunucu ismi: ", event.getGuild().getName().toString(), true);
             embed.addField("Sunucu konumu: ", event.getGuild().getLocale().toString(), true);
             embed.addField("Toplam üye sayısı:", String.valueOf(event.getGuild().getMemberCount()), false);
-            embed.addField("Sunucu kurulma tarihi: ", String.valueOf(event.getGuild().getTimeCreated()), false);
+            embed.addField("Sunucu kurulma tarihi: ", String.valueOf(event.getGuild().getTimeCreated().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))), false);
             embed.addField("Sunucu sahibi: ", event.getGuild().getOwner().getAsMention(), false);
-            event.getChannel().sendMessageEmbeds(embed.build()).queue();
+            embed.setTimestamp(Instant.now());
+            event.getChannel().sendMessageEmbeds(embed.build()).setActionRow(Button.danger("delete","Sil")).queue();
+            embed.clear();
 
 
             event.reply("Sunucu bilgileri başarıyla derlendi").setEphemeral(true).queue();
@@ -209,6 +216,7 @@ public class CommandManager extends ListenerAdapter {
     //Guild Command - sonradan eklenen komutlar var olan sunucularda çalışmaz max komut limiti 100
     // Command data da bir problem var onu çözmen gerek
     // filtreyi saate göre açıp kapanır yapabilirsin uğraş
+    // belirli miktar da satır silme komutu ekle
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
