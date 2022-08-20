@@ -1,5 +1,6 @@
 package com.muratcangozum.CursedBot;
 
+import com.muratcangozum.CursedBot.Listeners.WordFilter;
 import com.muratcangozum.CursedBot.commands.CommandManager;
 import com.muratcangozum.CursedBot.Listeners.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -39,13 +40,13 @@ public class Curse {
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setChunkingFilter(ChunkingFilter.ALL); // alta ki ikiliyle izinler herkes için tarama yaptığın çok memory tüketiyor önerilmez
         builder.enableCache(CacheFlag.ONLINE_STATUS, CacheFlag.ACTIVITY,CacheFlag.EMOJI,CacheFlag.CLIENT_STATUS,CacheFlag.MEMBER_OVERRIDES);
-        builder.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES);
+        builder.enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MESSAGE_TYPING);
         shardManager = builder.build();
 
 
         //Reg Listeners
 
-        shardManager.addEventListener(new EventListener(), new CommandManager());
+        shardManager.addEventListener(new EventListener(), new CommandManager(), new WordFilter());
 
 
 
