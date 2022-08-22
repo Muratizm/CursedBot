@@ -99,6 +99,7 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onUserUpdateOnlineStatus(@NotNull UserUpdateOnlineStatusEvent event) {
 
+
         List<Member> members = event.getGuild().getMembers();
         ArrayList<Member> invisibles = new ArrayList<>();
         int hiders = 0;

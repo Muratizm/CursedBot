@@ -204,12 +204,37 @@ public class CommandManager extends ListenerAdapter {
             event.reply("Filtre kapatıldı.").setEphemeral(true).queue();
 
 
-        } else {
+        } else if(command.equalsIgnoreCase("filtreaçkapa") && filterOnOff == false) {
             filterOnOff = true;
             event.getChannel().sendMessage("Sohbet Filtresi " + event.getUser().getAsTag() + " tarafından açıldı.").queue();
             event.reply("Filtre açıldı.").setEphemeral(true).queue();
 
         }
+        else if(command.equalsIgnoreCase("kullanıcıbilgisi")){
+
+            Member mem = event.getOption("gör").getAsMember();
+
+            EmbedBuilder eb = new EmbedBuilder();
+            eb.setTitle("-Kullanıcı bilgisi-");
+            eb.setColor(new Color(255,165,0));
+            eb.setThumbnail(mem.getEffectiveAvatar().getUrl());
+            eb.addField("Kullanıcı adı: ", mem.getUser().getAsTag(), false);
+            eb.addField("Kullanıcı ID: ", mem.getId(),false);
+            for (int i = 0; i < mem.getActivities().size();i++){
+
+                eb.addField("Kullanıcı aktivite durumu: ", String.valueOf(mem.getActivities().get(i)),false);
+
+            }
+            eb.addField("Kullanıcı oluşturma tarihi: ", mem.getTimeCreated().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),false);
+            eb.addField("Kullanıcı sunucuya katılma tarihi: ", mem.getTimeJoined().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), false);
+            eb.addField("Kullanıcı online statüsü: ", mem.getOnlineStatus().getKey(),false);
+            eb.setTimestamp(Instant.now());
+            event.getChannel().sendMessageEmbeds(eb.build()).queue();
+
+            event.reply("Bilgiler başarıyla görünütlendi.").setEphemeral(true).queue();
+
+        }
+
 
     }
 
@@ -217,6 +242,7 @@ public class CommandManager extends ListenerAdapter {
     // Command data da bir problem var onu çözmen gerek
     // filtreyi saate göre açıp kapanır yapabilirsin uğraş
     // belirli miktar da satır silme komutu ekle
+    //url ile kedi resmini image yükleyip embed ile atmayı dene
 
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
@@ -235,10 +261,12 @@ public class CommandManager extends ListenerAdapter {
         OptionData kickSomeOne = new OptionData(OptionType.USER, "kim", "Atılacak kişinin ismini girin.", true);
         OptionData rolSomeone = new OptionData(OptionType.USER, "kime", "Rol vermek istediğiniz kişi", true);
         OptionData WhichRole = new OptionData(OptionType.ROLE, "rol", "Hangi rol?", true);
+        OptionData whoInfo = new OptionData(OptionType.USER, "gör","kimi görmek istiyorsun?", true);
 
         List<CommandData> commandData = new ArrayList<>();
 
         OptionData fromWho = new OptionData(OptionType.USER, "kimden", "Rolünü alacağınız kişi", true);
+        commandData.add(Commands.slash("kullanıcıbilgisi","Kullanıcı hakkında bilgi verir.").addOptions(whoInfo));
         commandData.add(Commands.slash("filtreaçkapa", "filtreyi açıp kapaya yarar").setDefaultPermissions(DefaultMemberPermissions.DISABLED));
         commandData.add(Commands.slash("kedi", "Rasgele bir kedi resmi gönderir."));
         commandData.add(Commands.slash("rolal", "kişinin rolünü almak için kullanılır").setDefaultPermissions(DefaultMemberPermissions.DISABLED).addOptions(fromWho, WhichRole));
