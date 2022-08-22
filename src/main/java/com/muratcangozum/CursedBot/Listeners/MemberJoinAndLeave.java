@@ -44,7 +44,7 @@ public class MemberJoinAndLeave extends ListenerAdapter {
 
         MessageChannel channel = event.getGuild().getDefaultChannel().asTextChannel();
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setDescription(event.getMember().getAsMention() +  event.getChannelJoined().getAsMention() + " odasına katıldı. " );
+        embed.setDescription(event.getMember().getAsMention() +", "+  event.getChannelJoined().getAsMention() + " odasına katıldı. " );
         embed.setTimestamp(Instant.now());
         embed.setColor(new Color(29,52,179));
         channel.sendMessageEmbeds(embed.build()).queue();

@@ -29,6 +29,11 @@ import java.util.List;
 
 public class CommandManager extends ListenerAdapter {
 
+
+
+
+
+
     public static boolean filterOnOff = true;
 
     @Override
@@ -77,6 +82,7 @@ public class CommandManager extends ListenerAdapter {
             event.reply(user.getAsTag() + " peşine suikastçı gönderdin!").setEphemeral(true).queue();
 
         } else if (command.equalsIgnoreCase("roller")) {
+
 
             event.deferReply().setEphemeral(true).queue();
             String response = "";
@@ -183,13 +189,14 @@ public class CommandManager extends ListenerAdapter {
             URL url = null;
             try {
                 url = new URL("https://cat-api.org/cat/normal");
-            } catch (MalformedURLException e) {
+
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("Kedi");
-            eb.setImage(String.valueOf(url));
+            eb.setImage(url.toString());
             eb.setColor(Color.BLUE);
             event.getChannel().sendMessageEmbeds(eb.build()).queue();
             eb.clear();

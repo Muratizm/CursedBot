@@ -7,15 +7,18 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.DiscordLocale;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class EventListener extends ListenerAdapter {
 
+
+    String[] botWords = {"Ah shit here we go again.", "N'oldu", "Yeter seslenmeyin Yha", "Hangi gay sesleniyor", "insanlar bot yazmasını öğrenmiş",
+            "heh", ".s.s.s", "berbat bir gün insanlar benden bir şey istiyor","Biri bana mı, seslendi?","kes"};
+    Random random = new Random();
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
@@ -26,7 +29,6 @@ public class EventListener extends ListenerAdapter {
         String jumpLink = event.getJumpUrl().toString();
 
         String message = user.getAsTag() + "  Mesaja şu tepkiyi gösterdi: " + emoji + "  Kanalında:  " + channelMention + jumpLink;
-
 
 
         event.getGuild().getDefaultChannel().asTextChannel().sendMessage(message).queue();
@@ -40,6 +42,7 @@ public class EventListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
 
+        int a = random.nextInt(botWords.length);
 
         MessageChannel channel = event.getChannel();
 
@@ -51,7 +54,9 @@ public class EventListener extends ListenerAdapter {
             if (content.contains("bot")) {
 
 
-                channel.sendMessage("Biri bana mı, seslendi? ").queue();
+                System.out.println(a);
+
+                channel.sendMessage(botWords[a].toString()).queue();
             } else if (content.contains("mutluyum")) {
 
 
@@ -75,8 +80,7 @@ public class EventListener extends ListenerAdapter {
             } else if (content.contains("seni kim yarattı")) {
 
                 channel.sendMessage("Benim yaratıcım Myura#7498").queue();
-            }
-            else if(content.contains("sa")){
+            } else if (content.contains("sa")) {
 
                 channel.sendMessage("as").queue();
             }
@@ -120,7 +124,6 @@ public class EventListener extends ListenerAdapter {
     }
 
 
-    
 }
 
 
