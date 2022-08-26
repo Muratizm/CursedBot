@@ -1,10 +1,7 @@
 package com.muratcangozum.CursedBot;
 
-import com.muratcangozum.CursedBot.Listeners.ButtonTasks;
-import com.muratcangozum.CursedBot.Listeners.MemberJoinAndLeave;
-import com.muratcangozum.CursedBot.Listeners.WordFilter;
+import com.muratcangozum.CursedBot.Listeners.*;
 import com.muratcangozum.CursedBot.commands.CommandManager;
-import com.muratcangozum.CursedBot.Listeners.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -49,7 +46,7 @@ public class Curse {
         //Reg Listeners
 
         shardManager.addEventListener(new EventListener(), new CommandManager(), new WordFilter(), new ButtonTasks(),
-                new MemberJoinAndLeave());
+                new MemberJoinAndLeave(), new ChatClear());
 
 
 

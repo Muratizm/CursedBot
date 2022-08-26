@@ -2,10 +2,13 @@ package com.muratcangozum.CursedBot.commands;
 
 import com.muratcangozum.CursedBot.Listeners.Information;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.DiscordLocale;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
@@ -16,11 +19,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.jetbrains.annotations.NotNull;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -30,11 +29,11 @@ import java.util.List;
 public class CommandManager extends ListenerAdapter {
 
 
-
-
+    private String[] args;
 
 
     public static boolean filterOnOff = true;
+
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -63,7 +62,7 @@ public class CommandManager extends ListenerAdapter {
             embed.addField("Sunucu kurulma tarihi: ", String.valueOf(event.getGuild().getTimeCreated().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))), false);
             embed.addField("Sunucu sahibi: ", event.getGuild().getOwner().getAsMention(), false);
             embed.setTimestamp(Instant.now());
-            event.getChannel().sendMessageEmbeds(embed.build()).setActionRow(Button.danger("delete","Sil")).queue();
+            event.getChannel().sendMessageEmbeds(embed.build()).setActionRow(Button.danger("delete", "Sil")).queue();
             embed.clear();
 
 
@@ -211,30 +210,29 @@ public class CommandManager extends ListenerAdapter {
             event.reply("Filtre kapatıldı.").setEphemeral(true).queue();
 
 
-        } else if(command.equalsIgnoreCase("filtreaçkapa") && filterOnOff == false) {
+        } else if (command.equalsIgnoreCase("filtreaçkapa") && filterOnOff == false) {
             filterOnOff = true;
             event.getChannel().sendMessage("Sohbet Filtresi " + event.getUser().getAsTag() + " tarafından açıldı.").queue();
             event.reply("Filtre açıldı.").setEphemeral(true).queue();
 
-        }
-        else if(command.equalsIgnoreCase("kullanıcıbilgisi")){
+        } else if (command.equalsIgnoreCase("kullanıcıbilgisi")) {
 
             Member mem = event.getOption("gör").getAsMember();
 
             EmbedBuilder eb = new EmbedBuilder();
             eb.setTitle("-Kullanıcı bilgisi-");
-            eb.setColor(new Color(255,165,0));
+            eb.setColor(new Color(255, 165, 0));
             eb.setThumbnail(mem.getEffectiveAvatar().getUrl());
             eb.addField("Kullanıcı adı: ", mem.getUser().getAsTag(), false);
-            eb.addField("Kullanıcı ID: ", mem.getId(),false);
-            for (int i = 0; i < mem.getActivities().size();i++){
+            eb.addField("Kullanıcı ID: ", mem.getId(), false);
+            for (int i = 0; i < mem.getActivities().size(); i++) {
 
-                eb.addField("Kullanıcı aktivite durumu: ", String.valueOf(mem.getActivities().get(i)),false);
+                eb.addField("Kullanıcı aktivite durumu: ", String.valueOf(mem.getActivities().get(i)), false);
 
             }
-            eb.addField("Kullanıcı oluşturma tarihi: ", mem.getTimeCreated().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),false);
+            eb.addField("Kullanıcı oluşturma tarihi: ", mem.getTimeCreated().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), false);
             eb.addField("Kullanıcı sunucuya katılma tarihi: ", mem.getTimeJoined().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), false);
-            eb.addField("Kullanıcı online statüsü: ", mem.getOnlineStatus().getKey(),false);
+            eb.addField("Kullanıcı online statüsü: ", mem.getOnlineStatus().getKey(), false);
             eb.setTimestamp(Instant.now());
             event.getChannel().sendMessageEmbeds(eb.build()).queue();
 
@@ -247,10 +245,9 @@ public class CommandManager extends ListenerAdapter {
 
     //Guild Command - sonradan eklenen komutlar var olan sunucularda çalışmaz max komut limiti 100
     // Command data da bir problem var onu çözmen gerek
+    // help komutu ekle (yardım)
     // filtreyi saate göre açıp kapanır yapabilirsin uğraş
-    // belirli miktar da satır silme komutu ekle
-    //url ile kedi resmini image yükleyip embed ile atmayı dene
-
+    // müzik çalma eklenecek
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
 
@@ -268,12 +265,13 @@ public class CommandManager extends ListenerAdapter {
         OptionData kickSomeOne = new OptionData(OptionType.USER, "kim", "Atılacak kişinin ismini girin.", true);
         OptionData rolSomeone = new OptionData(OptionType.USER, "kime", "Rol vermek istediğiniz kişi", true);
         OptionData WhichRole = new OptionData(OptionType.ROLE, "rol", "Hangi rol?", true);
-        OptionData whoInfo = new OptionData(OptionType.USER, "gör","kimi görmek istiyorsun?", true);
+        OptionData whoInfo = new OptionData(OptionType.USER, "gör", "kimi görmek istiyorsun?", true);
 
         List<CommandData> commandData = new ArrayList<>();
 
         OptionData fromWho = new OptionData(OptionType.USER, "kimden", "Rolünü alacağınız kişi", true);
-        commandData.add(Commands.slash("kullanıcıbilgisi","Kullanıcı hakkında bilgi verir.").addOptions(whoInfo));
+        commandData.clear();
+        commandData.add(Commands.slash("kullanıcıbilgisi", "Kullanıcı hakkında bilgi verir.").addOptions(whoInfo));
         commandData.add(Commands.slash("filtreaçkapa", "filtreyi açıp kapaya yarar").setDefaultPermissions(DefaultMemberPermissions.DISABLED));
         commandData.add(Commands.slash("kedi", "Rasgele bir kedi resmi gönderir."));
         commandData.add(Commands.slash("rolal", "kişinin rolünü almak için kullanılır").setDefaultPermissions(DefaultMemberPermissions.DISABLED).addOptions(fromWho, WhichRole));
@@ -295,5 +293,8 @@ public class CommandManager extends ListenerAdapter {
 
     }
 
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
 
+    }
 }
