@@ -5,6 +5,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
+import net.dv8tion.jda.api.entities.sticker.Sticker;
+import net.dv8tion.jda.api.entities.sticker.StickerItem;
+import net.dv8tion.jda.api.entities.sticker.StickerSnowflake;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -74,9 +77,12 @@ public class CommandManager extends ListenerAdapter {
             User user = mappingKill.getAsUser();
 
 
-            MessageChannel channel = event.getChannel();
-            channel.sendMessage(user.getAsMention() + " öldü.").queue();
+           EmbedBuilder embed = new EmbedBuilder();
 
+           embed.setColor(Color.red);
+           embed.setDescription(user.getAsMention() + " Cesedi bulundu!");
+           embed.setTimestamp(Instant.now());
+           event.getChannel().sendMessageEmbeds(embed.build()).queue();
 
             event.reply(user.getAsTag() + " peşine suikastçı gönderdin!").setEphemeral(true).queue();
 
