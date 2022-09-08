@@ -248,7 +248,7 @@ public class CommandManager extends ListenerAdapter {
 
 
     }
-
+         // TO DO LIST
     //Guild Command - sonradan eklenen komutlar var olan sunucularda çalışmaz max komut limiti 100
     // Command data da bir problem var onu çözmen gerek
     // help komutu ekle (yardım)

@@ -1,9 +1,14 @@
 package com.muratcangozum.CursedBot.Listeners;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Channel;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.api.events.guild.GuildTimeoutEvent;
+import net.dv8tion.jda.api.events.guild.invite.GuildInviteCreateEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.update.GuildUpdateAfkTimeoutEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -22,9 +27,11 @@ public class MemberJoinAndLeave extends ListenerAdapter {
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setDescription("Aramıza " + event.getMember().getAsMention() + " Katıldı.");
+        embed.setImage(event.getMember().getAvatarUrl());
         embed.setTimestamp(Instant.now());
 
         message.sendMessageEmbeds(embed.build()).queue();
+
 
 
     }
@@ -32,10 +39,16 @@ public class MemberJoinAndLeave extends ListenerAdapter {
 
 
     @Override
-    public void onGuildLeave(@NotNull GuildLeaveEvent event) {
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
 
-        MessageChannel message = event.getGuild().getSystemChannel();
+        MessageChannel messageChannel = event.getGuild().getSystemChannel();
 
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setDescription(event.getMember().getNickname() + " Aramızdan ayrıldı :(");
+        embedBuilder.setColor(new Color(250,185,185));
+        embedBuilder.setThumbnail(event.getMember().getAvatarUrl());
+        embedBuilder.setTimestamp(Instant.now());
+        messageChannel.sendMessageEmbeds(embedBuilder.build()).queue();
 
     }
 
@@ -62,5 +75,7 @@ public class MemberJoinAndLeave extends ListenerAdapter {
         channel.sendMessageEmbeds(embed.build()).queue();
 
     }
+
+
 
 }
